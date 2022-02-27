@@ -64,6 +64,8 @@ def show_pcl(pcl):
     vis.register_key_callback(key, o3d_update_function)
     vis.run()
 
+    vis.destroy_window()
+
     #######
     ####### ID_S1_EX2 END #######     
        
