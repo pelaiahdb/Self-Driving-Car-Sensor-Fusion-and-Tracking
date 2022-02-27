@@ -46,7 +46,7 @@ def show_pcl(pcl):
 
 
     def o3d_update_function(self):
-        vis.destroy_window()
+        vis.close()
 
     
     # step 2 : create instance of open3d point-cloud class
