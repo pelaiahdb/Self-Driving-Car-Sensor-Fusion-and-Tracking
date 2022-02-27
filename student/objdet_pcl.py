@@ -45,10 +45,8 @@ def show_pcl(pcl):
     vis.create_window()
 
 
-    def o3d_update_function():
-        vis.update_renderer()
-        vis.poll_events()
-        vis.run()
+    def o3d_update_function(self):
+        vis.destroy_window()
 
     
     # step 2 : create instance of open3d point-cloud class
@@ -64,9 +62,7 @@ def show_pcl(pcl):
     # step 5 : visualize point cloud and keep window open until right-arrow is pressed (key-code 262)
     
     vis.register_key_callback(key, o3d_update_function)
-
     vis.run()
-    vis.update_renderer()
 
     #######
     ####### ID_S1_EX2 END #######     
