@@ -217,7 +217,7 @@ def detect_objects(input_bev_maps, model, configs):
             #######
             print("student task ID_S3_EX1-5")
 
-            detections = decode(outputs['hm_cen'], outputs['cen_offset'], outputs['direction'], outputs['z_coor'], outputs['dim'], 50)
+            detections = decode(_sigmoid(outputs['hm_cen']), _sigmoid(outputs['cen_offset']), outputs['direction'], outputs['z_coor'], outputs['dim'], 50)
             detections = detections.cpu().numpy().astype(np.float32)
             detections = post_processing(detections, configs)
 
@@ -243,7 +243,7 @@ def detect_objects(input_bev_maps, model, configs):
                     
                     ## step 3 : perform the conversion using the limits for x, y and z set in the configs structure
                     bev_x = y / configs.bev_height * (configs.lim_x[1] - configs.lim_x[0])
-                    bev_y = x / configs.bev_width * (configs.lim_y[1] - configs.lim_y[0]) - (configs.lim_y[1] - configs.lim_y[0]) /2.0 
+                    bev_y = x / configs.bev_width * (configs.lim_y[1] - configs.lim_y[0]) - (configs.lim_y[1] - configs.lim_y[0]) / 2.0 
                     bev_w = w / configs.bev_width * (configs.lim_y[1] - configs.lim_y[0]) 
                     bev_l = l / configs.bev_height * (configs.lim_x[1] - configs.lim_x[0])
                     if ((bev_x >= configs.lim_x[0]) and (bev_x <= configs.lim_x[1])

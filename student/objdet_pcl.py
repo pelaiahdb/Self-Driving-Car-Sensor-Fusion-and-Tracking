@@ -109,12 +109,12 @@ def show_range_image(frame, lidar_name):
     
     # img_range_intensity = [] # remove after implementing all steps
 
-#     deg45 = int(img_range_intensity.shape[1] / 8)
-#     ri_center = int(img_range_intensity.shape[1]/2)
-#     img_range_intensity = img_range_intensity[:,ri_center-deg45:ri_center+deg45]
+    deg90 = int(img_range_intensity.shape[1] / 4)
+    ri_center = int(img_range_intensity.shape[1]/2)
+    display_cropped = img_range_intensity[:,ri_center-deg90:ri_center+deg90]
 
-    cv2.imshow('range_image', img_range_intensity)
-    cv2.waitKey(0)
+    # cv2.imshow('range_image', display_cropped)
+    # cv2.waitKey(0)
     
     # img_range_intensity = [] # remove after implementing all steps
     #######
@@ -155,7 +155,7 @@ def bev_from_pcl(lidar_pcl, configs):
 
     # step 4 : visualize point-cloud using the function show_pcl from a previous task
 
-    show_pcl(lidar_pcl_cpy)
+    # show_pcl(lidar_pcl_cpy)
     
     #######
     ####### ID_S2_EX1 END #######     
@@ -189,13 +189,13 @@ def bev_from_pcl(lidar_pcl, configs):
 
     ## step 5 : temporarily visualize the intensity map using OpenCV to make sure that vehicles separate well from the background
 
-    img_intensity = intensity_map * 256
-    img_intensity = img_intensity.astype(np.uint8)
-    while (1):
-        cv2.imshow('img_intensity', img_intensity)
-        if cv2.waitKey(10) & 0xFF == 27:
-            break
-    cv2.destroyAllWindows()
+    # img_intensity = intensity_map * 256
+    # img_intensity = img_intensity.astype(np.uint8)
+    # while (1):
+    #     cv2.imshow('img_intensity', img_intensity)
+    #     if cv2.waitKey(10) & 0xFF == 27:
+    #         break
+    # cv2.destroyAllWindows()
 
     #######
     ####### ID_S2_EX2 END ####### 
@@ -218,13 +218,13 @@ def bev_from_pcl(lidar_pcl, configs):
 
     ## step 3 : temporarily visualize the intensity map using OpenCV to make sure that vehicles separate well from the background
 
-    img_height = height_map * 256
-    img_height = img_height.astype(np.uint8)
-    while (1):
-        cv2.imshow('img_height', img_height)
-        if cv2.waitKey(10) & 0xFF == 27:
-            break
-    cv2.destroyAllWindows()
+    # img_height = height_map * 256
+    # img_height = img_height.astype(np.uint8)
+    # while (1):
+    #     cv2.imshow('img_height', img_height)
+    #     if cv2.waitKey(10) & 0xFF == 27:
+    #         break
+    # cv2.destroyAllWindows()
 
     #######
     ####### ID_S2_EX3 END #######       
