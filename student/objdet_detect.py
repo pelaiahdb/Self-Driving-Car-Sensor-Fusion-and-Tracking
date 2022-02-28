@@ -57,6 +57,7 @@ def load_configs_model(model_name='darknet', configs=None):
         configs.num_workers = 4
         configs.pin_memory = True
         configs.use_giou_loss = False
+        configs.min_iou = 0.5
 
     elif model_name == 'fpn_resnet':
         ####### ID_S3_EX1-3 START #######     
@@ -102,6 +103,7 @@ def load_configs_model(model_name='darknet', configs=None):
         configs.num_input_features = 4
         configs.root_dir = '../'
         configs.dataset_dir = os.path.join(configs.root_dir, 'dataset', 'kitti')
+        configs.min_iou = 0.5
 
 
         #######
