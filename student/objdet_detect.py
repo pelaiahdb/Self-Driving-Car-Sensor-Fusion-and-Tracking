@@ -267,14 +267,8 @@ def detect_objects(input_bev_maps, model, configs):
                 objects.append([1, bev_x, bev_y, z, h, bev_w, bev_l, yaw])
 
         
-        
-        
     #######
     ####### ID_S3_EX2 END #######   
 
-    
-
-
-    
     return objects    
 

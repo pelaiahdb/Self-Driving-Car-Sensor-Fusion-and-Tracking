@@ -49,16 +49,39 @@ def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5)
             print("student task ID_S4_EX1 ")
 
             ## step 1 : extract the four corners of the current label bounding-box
+            # x y w l yaw for compute_box_corners
+            lx = label.box.center_x
+            ly = label.box.center_y
+            lz = label.box.center_z
+
+            label_corners = tools.compute_box_corners (lx, ly, label.box.width, label.box.height, label.box.heading)
+            label_area = Polygon(label_corners)
             
             ## step 2 : loop over all detected objects
 
+            for det in detections:
+                _, x, y, z, _, w, l, yaw = det
+
                 ## step 3 : extract the four corners of the current detection
+                det_corners = tools.compute_box_corners (x, y, w, l, yaw)
+                det_area = Polygon(det_corners)
                 
-                ## step 4 : computer the center distance between label and detection bounding-box in x, y, and z
+                ## step 4 : compute the center distance between label and detection bounding-box in x, y, and z
+                dist_x = lx - x
+                dist_y = ly - y
+                dist_z = lz - z
                 
                 ## step 5 : compute the intersection over union (IOU) between label and detection bounding-box
+
+                intersec = label_area.intersection(det_area)
+                union = label_area.union(det_area)
+                iou = intersec.area / union.area
                 
                 ## step 6 : if IOU exceeds min_iou threshold, store [iou,dist_x, dist_y, dist_z] in matches_lab_det and increase the TP count
+
+                if (iou > min_iou):
+                    matches_lab_det.append([iou, dist_x, dist_y, dist_z])
+                    true_positives += 1
                 
             #######
             ####### ID_S4_EX1 END #######     
