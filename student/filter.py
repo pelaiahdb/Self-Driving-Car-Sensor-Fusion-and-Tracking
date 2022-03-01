@@ -31,7 +31,24 @@ class Filter:
         # TODO Step 1: implement and return system matrix F
         ############
 
-        return 0
+        # State transition function is a matrix F or system matrix
+        # xk = f(xk-1) + v = F(xk-1) + v where v ~ N(0,Q) is a zero mean process noise with Q covariance
+
+        # get delta t
+        dt = params.dt
+
+        # we use the 6D system matrix F from Lesson 6.7 for State Prediction
+
+        system_matrix = np.matrix([
+                                [1, 0, 0, dt, 0, 0],
+                                [0, 1, 0, 0, dt, 0],
+                                [0, 0, 1, 0, 0, dt],
+                                [0, 0, 0, 1, 0, 0],
+                                [0, 0, 0, 0, 1, 0],
+                                [0, 0, 0, 0, 0, 1]
+                                ])
+
+        return system_matrix
         
         ############
         # END student code
