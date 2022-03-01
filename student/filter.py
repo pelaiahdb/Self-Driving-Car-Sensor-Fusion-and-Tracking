@@ -59,7 +59,32 @@ class Filter:
         # TODO Step 1: implement and return process noise covariance Q
         ############
 
-        return 0
+        # Process Noise Covariance Q
+        # Q=E[ννT]
+        # Q(Δt)=∫0Δt​F(t)QF(t)Tdt
+        # q is a design parameter and should be chosen depending on the expected maximum change in velocity.
+        # For highly dynamic maneuvers, we could use a higher process noise,
+        # e.g. q=(8ms2)2 would fit for emergency braking,
+        # whereas for normal situations on a highway e.g. q=(3s2m​)2 could be an adequate choice.
+        
+
+        dt = params.dt
+        q = params.q
+
+        # For a 6D Q
+
+        q1 = ((dt**3)/3) * q 
+        q2 = ((dt**2)/2) * q 
+        q3 = dt * q
+
+        return np.matrix([
+                        [q1, 0, 0, q2, 0, 0],
+                        [0, q1, 0, 0, q2, 0],
+                        [0, 0, q1, 0, 0, q2],
+                        [q2, 0, 0, q3, 0, 0],
+                        [0, q2, 0, 0, q3, 0],
+                        [0, 0, q2, 0, 0, q3]
+                        ])
         
         ############
         # END student code
@@ -70,7 +95,19 @@ class Filter:
         # TODO Step 1: predict state x and estimation error covariance P to next timestep, save x and P in track
         ############
 
-        pass
+        # Lecture notes:
+        # predict state and estimation error covariance to next timestep
+        # F = self.F()
+        # x = F*x # state prediction
+        # P = F*P*F.transpose() + self.Q() # covariance prediction
+
+        F = self.F()
+        Q = self.Q()
+
+        track.set_x(F * track.x)
+        track.set_P(F * track.P * F.transpose() + Q)
+
+        # pass
         
         ############
         # END student code
@@ -80,6 +117,36 @@ class Filter:
         ############
         # TODO Step 1: update state x and covariance P with associated measurement, save x and P in track
         ############
+
+        # Lecture notes:
+        # update state and covariance with associated measurement
+        # H = self.H() # measurement matrix
+        # gamma = z - H*x # residual
+        # S = H*P*H.transpose() + R # covariance of residual
+        # K = P*H.transpose()*np.linalg.inv(S) # Kalman gain
+        # x = x + K*gamma # state update
+        # I = np.identity(self.dim_state)
+        # P = (I - K*H) * P # covariance update
+
+        x = track.x
+        P = track.P
+
+        # get linear measurement matrix. note that get_hx is non-linear
+        H = meas.sensor.get_H(x)
+
+        # solve gamma function and call it
+        gamma = self.gamma(track, meas)
+
+        # solve S function and call it
+        S = self.S(track, meas, H)
+
+        K = P*H.transpose()*np.linalg.inv(S)
+        x = x + K*gamma
+        I = np.identity(params.dim_state)
+        P = (I - K*H) * P
+
+        track.set_x(x)
+        track.set_P(P)
         
         ############
         # END student code
@@ -91,7 +158,15 @@ class Filter:
         # TODO Step 1: calculate and return residual gamma
         ############
 
-        return 0
+        # gamma = z - H*x # residual
+        x = track.x
+
+        # use linear H
+        H = meas.sensor.get_H(x)
+        z = meas.z
+        gamma = z - H*x
+
+        return gamma
         
         ############
         # END student code
@@ -102,7 +177,14 @@ class Filter:
         # TODO Step 1: calculate and return covariance of residual S
         ############
 
-        return 0
+        # Lecture notes:
+        # S = H*P*H.transpose() + R # covariance of residual
+
+        P = track.P
+        R = meas.R #covariance R
+        S = H * P * H.transpose() + R
+
+        return S
         
         ############
         # END student code
