@@ -18,7 +18,7 @@ Step 1: filter.py [filter.py](./student/filter.py)
 
 We design our Extended Kalman Filter by first defining the system matrix F for constant velocity and the corresponding process noise covariance Q. For this step we test our filter for a single target:
 
-![step1](./finalwriteup/step1.mp4)
+![step1](./finalwriteup/step1.gif)
 
 ![RMSE](./finalwriteup/step1rmse.png)
 
@@ -36,7 +36,7 @@ Step 2: trackmanagement.py [trackmanagement.py](./student/trackmanagement.py)
 
 For track management, we assign a score and a state for each track. For every detection, we increase the track score while it is associated with a measurement, and decrease it otherwise. We use score thresholds to determine which track to keep and which to delete.
 
-![step2](./finalwriteup/step2.mp4)
+![step2](./finalwriteup/step2.gif)
 
 ![RMSE](./finalwriteup/step2rmse.png)
 
@@ -54,7 +54,7 @@ Step 3: association.py [association.py](./student/association.py)
 
 We choose the Simple Nearest Neighbor (SNN) algorithm for data association. To minimize the case where SNN pairs the nearest measurement despite it being outside the track's covariance, we instead measure the Mahalanobis distance (MHD) which weighs the distance with the residual covariance, thus preventing unlikely associations. Since SNN is very costly, we use gating to replace unlikely measurements with an infinity distance in the association matrix to ignore them.
 
-![step3](./finalwriteup/step3.mp4)
+![step3](./finalwriteup/step3.gif)
 
 ![RMSE](./finalwriteup/step3rmse.png)
 
@@ -72,7 +72,7 @@ Step 4: measurements.py [measurements.py](./student/measurements.py)
 
 For the final step, we enable the camera filter and let it fuse with Lidar measurements in the Kalman filter. For the camera, we use a nonlinear measurement matrix h(x). We only update tracks with a camera measurement if the track is visible to the camera, and we determine visibility with an angle filter within the camera FOV.
 
-![step4](./finalwriteup/step4.mp4)
+![step4](./finalwriteup/step4.gif)
 
 ![RMSE](./finalwriteup/step4rmse.png)
 
