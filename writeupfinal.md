@@ -44,11 +44,11 @@ We see a continuous tracking for one single track.
 <hr>
 <br>
 
-#Data Association
+# Data Association
 <hr>
 <br>
 
-##Associate measurements to tracks with nearest neighbor association
+## Associate measurements to tracks with nearest neighbor association
 
 Step 3: association.py [association.py](./student/association.py)
 
@@ -62,11 +62,11 @@ Here we see continuous tracking of at least two vehicles.
 <hr>
 <br>
 
-#Sensor Fusion
+# Sensor Fusion
 <hr>
 <br>
 
-##SWBAT fuse measurements from lidar and camera
+## SWBAT fuse measurements from lidar and camera
 	
 Step 4: measurements.py [measurements.py](./student/measurements.py)
 
