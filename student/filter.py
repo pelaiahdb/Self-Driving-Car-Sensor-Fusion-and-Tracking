@@ -161,10 +161,10 @@ class Filter:
         # gamma = z - H*x # residual
         x = track.x
 
-        # use linear H
-        H = meas.sensor.get_H(x)
+        # use linear H then replace with hx for nonlinear camera
+        hx = meas.sensor.get_hx(x)
         z = meas.z
-        gamma = z - H*x
+        gamma = z - hx
 
         return gamma
         
