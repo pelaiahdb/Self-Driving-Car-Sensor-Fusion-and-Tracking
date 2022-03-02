@@ -35,20 +35,35 @@ class Track:
         # - initialize track state and track score with appropriate values
         ############
 
-        self.x = np.matrix([[49.53980697],
-                        [ 3.41006279],
-                        [ 0.91790581],
-                        [ 0.        ],
-                        [ 0.        ],
-                        [ 0.        ]])
-        self.P = np.matrix([[9.0e-02, 0.0e+00, 0.0e+00, 0.0e+00, 0.0e+00, 0.0e+00],
-                        [0.0e+00, 9.0e-02, 0.0e+00, 0.0e+00, 0.0e+00, 0.0e+00],
-                        [0.0e+00, 0.0e+00, 6.4e-03, 0.0e+00, 0.0e+00, 0.0e+00],
-                        [0.0e+00, 0.0e+00, 0.0e+00, 2.5e+03, 0.0e+00, 0.0e+00],
-                        [0.0e+00, 0.0e+00, 0.0e+00, 0.0e+00, 2.5e+03, 0.0e+00],
-                        [0.0e+00, 0.0e+00, 0.0e+00, 0.0e+00, 0.0e+00, 2.5e+01]])
-        self.state = 'confirmed'
-        self.score = 0
+        # NOTE: Following code are based on Dr. Haja's lecture solutions
+
+        # transform measurement to vehicle coordinates
+        pos_sens = np.ones((4, 1)) # homogeneous coordinates
+        pos_sens[0:3] = meas.z[0:3] 
+        pos_veh = meas.sensor.sens_to_veh*pos_sens
+        
+        # save initial state from measurement
+        self.x = np.zeros((6,1))
+        self.x[0:3] = pos_veh[0:3]
+        
+        # set up position estimation error covariance
+        P_pos = M_rot * meas.R * np.transpose(M_rot)
+        
+        # set up velocity estimation error covariance
+        sigma_p44 = params.sigma_p44 # initial setting for estimation error covariance P entry for vx
+        sigma_p55 = params.sigma_p55 # initial setting for estimation error covariance P entry for vy
+        sigma_p66 = params.sigma_p66 # initial setting for estimation error covariance P entry for vz
+        P_vel = np.matrix([[sigma_p44**2, 0, 0],
+                        [0, sigma_p55**2, 0],
+                        [0, 0, sigma_p66**2]])
+        
+        # overall covariance initialization
+        self.P = np.zeros((6, 6))
+        self.P[0:3, 0:3] = P_pos
+        self.P[3:6, 3:6] = P_vel        
+
+        self.state = 'initialized'
+        self.score = 1./params.window
         
         ############
         # END student code
@@ -107,9 +122,21 @@ class Trackmanagement:
             if meas_list: # if not empty
                 if meas_list[0].sensor.in_fov(track.x):
                     # your code goes here
-                    pass 
+                    track.score -= 1./params.window # perhaps higher
+
+        # LECTURE NOTE: The parameter params.delete_threshold = 0.6 is only meant for deleting confirmed tracks,
+        #  as stated in the comment. If you use it to delete initialized or tentative tracks, they might be deleted
+        #  right after initialization because the track score is still too low. Therefore, delete initialized or
+        #  tentative tracks only if track.P[0,0] or track.P[1,1] is bigger than params.max_P, 
+        #  or if the score gets very low.
 
         # delete old tracks   
+        for track in self.track_list:
+            if track.state == 'confirmed':
+                if (track.score < params.delete_threshold):
+                    self.delete_track(track)
+            elif track.P[0,0] > params.max_P or track.P[1,1] > params.max_P or track.score < 1./params.window:
+                self.delete_track(track)
 
         ############
         # END student code
@@ -140,7 +167,14 @@ class Trackmanagement:
         # - set track state to 'tentative' or 'confirmed'
         ############
 
-        pass
+        track.score += 1./params.window
+
+        if track.score > params.confirmed_threshold:
+            track.state = 'confirmed'
+            if track.score > 1:
+                track.score = 1.
+        else:
+            track.state = 'tentative'
         
         ############
         # END student code
